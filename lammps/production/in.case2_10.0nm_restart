@@ -1,0 +1,45 @@
+# Case 2 — 10.0 nm B nanoparticle
+# RESTART from equil.data (step 120000)
+# Production MD at 2500 K (100 ps)
+# Fixes: larger neighbor skin, more frequent neighbor check
+
+package         omp 2
+units           real
+atom_style      charge
+boundary        p p p
+
+read_data       case2_10.0nm_equil.data
+
+pair_style      reaxff NULL safezone 5.0 mincap 200
+pair_coeff      * * ffield.reax.BOH H B O
+
+fix             qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+
+# Increased skin (2.0 -> 3.0) and check every step
+neighbor        3.0 bin
+neigh_modify    every 1 delay 0 check yes
+
+variable        dt equal 0.25
+
+# Stage 4: Production MD at 2500 K (100 ps)
+reset_timestep  0
+timestep        ${dt}
+
+fix             nvt4 all nvt temp 2500.0 2500.0 25.0
+
+thermo          200
+thermo_style    custom step temp pe ke etotal press vol
+
+dump            prod all custom 400 case2_10.0nm_prod_r.lammpstrj id type x y z q
+dump_modify     prod sort id element H B O
+
+fix             bonds all reaxff/bonds 200 case2_10.0nm_bonds_r.txt
+fix             species all reaxff/species 200 1 200 case2_10.0nm_species_r.txt
+
+# Write restart every 50000 steps as safety net
+restart         50000 case2_10.0nm_restart.a case2_10.0nm_restart.b
+
+run             400000
+
+write_data      case2_10.0nm_final.data
+print "Case 2 10.0nm restart complete!"

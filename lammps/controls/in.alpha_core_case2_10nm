@@ -1,0 +1,43 @@
+# Case 2, 10 nm, alpha-rhombohedral (B12) boron core; original four-stage protocol + 100 ps production (GPU)
+units           real
+atom_style      charge
+boundary        p p p
+read_data       alpha_case2_10nm.data
+pair_style      reaxff NULL
+pair_coeff      * * ffield.reax.BOH H B O
+fix             qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+timestep        0.05
+velocity        all create 10.0 44 dist gaussian mom yes
+fix             pre1 all nve/limit 0.03
+fix             pre2 all langevin 100.0 100.0 5.0 44
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+thermo_modify   flush yes
+run             1000
+unfix pre1
+unfix pre2
+reset_timestep  0
+timestep        0.25
+velocity        all create 4000.0 12347 dist gaussian mom yes rot yes
+fix             nvt1 all nvt temp 4000.0 4000.0 25.0
+thermo          200
+dump            melt all custom 2000 melt.lammpstrj id type x y z
+dump_modify     melt sort id
+run             40000
+unfix nvt1
+fix             nvt2 all nvt temp 4000.0 2500.0 25.0
+run             40000
+unfix nvt2
+fix             nvt3 all nvt temp 2500.0 2500.0 25.0
+run             40000
+unfix nvt3
+undump          melt
+write_data      equil.data
+fix             nvt4 all nvt temp 2500.0 2500.0 25.0
+dump            prod all custom 2000 prod.lammpstrj id type x y z
+dump_modify     prod sort id
+restart         100000 restart.a restart.b
+run             400000
+write_data      final.data

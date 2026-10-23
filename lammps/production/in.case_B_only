@@ -1,0 +1,87 @@
+# ============================================================
+# Control: Pure B nanoparticle (no B2O3 shell, no O2)
+# ReaxFF MD - Same melt-and-quench protocol as Case 1
+# Atom types: 1=H  2=B  3=O (kept for ReaxFF compatibility)
+# ============================================================
+
+package         omp 2
+units           real
+atom_style      charge
+boundary        p p p
+
+read_data       case_B_only.data
+
+# ReaxFF B/O/H potential (Weismiller 2010)
+pair_style      reaxff NULL safezone 5.0 mincap 200
+pair_coeff      * * ffield.reax.BOH H B O
+
+# Charge equilibration (every step)
+fix             qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+
+# Neighbor list
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+
+# Timestep for ReaxFF
+variable        dt equal 0.25   # fs
+
+# ============================================================
+# Stage 0: Damped pre-relax at 100 K
+# ============================================================
+timestep        0.05
+velocity        all create 10.0 99999 dist gaussian mom yes
+fix             pre1 all nve/limit 0.03
+fix             pre2 all langevin 100.0 100.0 5.0 99999
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+run             1000
+unfix           pre1
+unfix           pre2
+reset_timestep  0
+
+# ============================================================
+# Stage 1: Melt at 4000 K (10 ps)
+# ============================================================
+timestep        ${dt}
+velocity        all create 4000.0 12345 dist gaussian mom yes rot yes
+
+fix             nvt1 all nvt temp 4000.0 4000.0 25.0
+thermo          200
+thermo_style    custom step temp pe ke etotal press
+dump            melt all custom 2000 case_B_only_melt.lammpstrj id type x y z q
+dump_modify     melt sort id element H B O
+run             40000    # 10 ps
+unfix           nvt1
+undump          melt
+
+# ============================================================
+# Stage 2: Quench to 2500 K (10 ps)
+# ============================================================
+fix             nvt2 all nvt temp 4000.0 2500.0 25.0
+run             40000    # 10 ps
+unfix           nvt2
+
+# ============================================================
+# Stage 3: Equilibrate at 2500 K (10 ps)
+# ============================================================
+fix             nvt3 all nvt temp 2500.0 2500.0 25.0
+run             40000    # 10 ps
+unfix           nvt3
+
+write_data      case_B_only_equil.data
+
+# ============================================================
+# Stage 4: Production MD at 2500 K (100 ps)
+# ============================================================
+fix             nvt4 all nvt temp 2500.0 2500.0 25.0
+
+thermo          200
+thermo_style    custom step temp pe ke etotal press vol
+
+dump            prod all custom 400 case_B_only_prod.lammpstrj id type x y z q
+dump_modify     prod sort id element H B O
+
+run             400000   # 100 ps
+
+write_data      case_B_only_final.data
+print "Pure B control simulation complete!"

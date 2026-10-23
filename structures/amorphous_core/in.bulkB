@@ -1,0 +1,27 @@
+# Amorphous/liquid B reference: melt 4000 K, quench, NPT equilibrate at 2500 K, 0 atm
+units           real
+atom_style      charge
+boundary        p p p
+read_data       bulkB_init.data
+pair_style      reaxff NULL
+pair_coeff      * * ffield.reax.BOH H B O
+fix             qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+thermo          500
+thermo_style    custom step temp pe press density vol
+timestep        0.05
+fix             pre all nve/limit 0.03
+run             2000
+unfix           pre
+timestep        0.25
+velocity        all create 4000.0 4321 dist gaussian mom yes rot yes
+fix             t1 all nvt temp 4000.0 4000.0 25.0
+run             20000
+unfix           t1
+fix             t2 all nvt temp 4000.0 2500.0 25.0
+run             20000
+unfix           t2
+fix             t3 all npt temp 2500.0 2500.0 25.0 iso 1.0 1.0 500.0
+run             80000
+write_data      bulkB_2500K.data

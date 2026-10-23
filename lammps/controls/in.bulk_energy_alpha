@@ -1,0 +1,19 @@
+units real
+atom_style charge
+boundary p p p
+read_data alpha.data
+mass 1 1.008
+mass 2 10.811
+mass 3 15.999
+pair_style reaxff NULL
+pair_coeff * * ffield.reax.BOH H B O
+fix qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+neighbor 2.0 bin
+variable pe equal pe/atoms
+thermo_style custom step pe v_pe press density
+min_style cg
+minimize 1e-8 1e-8 2000 20000
+print "FIXEDBOX alpha pe/atom= ${pe} density= $(density)"
+fix br all box/relax iso 0.0 vmax 0.001
+minimize 1e-8 1e-8 4000 40000
+print "RELAXED alpha pe/atom= ${pe} density= $(density)"

@@ -1,0 +1,30 @@
+# CTRL-B: amorphous pre-equilibrated B core, no 4000 K stage; 2500 K NVT for 130 ps (same total time as Stages 1-4)
+units           real
+atom_style      charge
+boundary        p p p
+read_data       ctrl_case1_10.0nm_amorphcore.data
+pair_style      reaxff NULL
+pair_coeff      * * ffield.reax.BOH H B O
+fix             qeq all qeq/reaxff 1 0.0 10.0 1.0e-6 reaxff
+neighbor        2.0 bin
+neigh_modify    every 5 delay 0 check yes
+timestep        0.05
+velocity        all create 10.0 43 dist gaussian mom yes
+fix             pre1 all nve/limit 0.03
+fix             pre2 all langevin 100.0 100.0 5.0 43
+thermo          100
+thermo_style    custom step temp pe ke etotal press
+run             1000
+unfix pre1
+unfix pre2
+reset_timestep  0
+timestep        0.25
+velocity        all create 2500.0 12346 dist gaussian mom yes rot yes
+fix             nvt all nvt temp 2500.0 2500.0 25.0
+thermo          200
+dump            d all custom 4000 traj.lammpstrj id type x y z
+dump_modify     d sort id
+run             120000
+write_data      equil.data
+run             400000
+write_data      final.data

@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the article and the dataset."
+title: "BoronCombustion: ReaxFF-MD inputs and analysis for boron nanoparticles with B2O3 and H3BO3/B2O3 surface layers"
+authors:
+  - family-names: Lee
+    given-names: Jong Hyeon
+  - family-names: Joo
+    given-names: Sin Hyong
+  - family-names: Lee
+    given-names: Yo Han
+  - family-names: Nersisyan
+    given-names: Hayk
+license: MIT
+repository-code: "https://github.com/jonglee69/BoronCombustion"
+# identifiers:            # add the Zenodo DOI of the data record once it is published
+#   - type: doi
+#     value: 10.5281/zenodo.XXXXXXX
+preferred-citation:
+  type: article
+  title: "Degradable nanoscale interface engineering and particle-size refinement synergistically unlock high-energy boron reactivity"
+  authors:
+    - family-names: Lee
+      given-names: Jong Hyeon
+    - family-names: Joo
+      given-names: Sin Hyong
+    - family-names: Lee
+      given-names: Yo Han
+    - family-names: Nersisyan
+      given-names: Hayk
+  journal: "Energy & Fuels"
+  status: submitted
