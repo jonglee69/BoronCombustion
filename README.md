@@ -6,8 +6,8 @@ ReaxFF reactive molecular dynamics (ReaxFF-MD) inputs, structure generators, and
 > J. H. Lee, S. H. Joo, Y. H. Lee, H. Nersisyan, *Degradable nanoscale interface engineering and particle-size refinement
 > synergistically unlock high-energy boron reactivity*, Energy & Fuels (submitted).
 
-The simulation data (structures, trajectories, species and log files; ~XX GB compressed) are archived in Zenodo:
-**https://doi.org/10.5281/zenodo.XXXXXXX**.
+The simulation data (structures, trajectories, species and log files; ~12 GB compressed) are archived in Zenodo:
+**https://doi.org/10.5281/zenodo.23589942**.
 
 ## Contents
 

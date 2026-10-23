@@ -12,9 +12,10 @@ authors:
     given-names: Hayk
 license: MIT
 repository-code: "https://github.com/jonglee69/BoronCombustion"
-# identifiers:            # add the Zenodo DOI of the data record once it is published
-#   - type: doi
-#     value: 10.5281/zenodo.XXXXXXX
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23589942
+    description: "Simulation data (Zenodo)"
 preferred-citation:
   type: article
   title: "Degradable nanoscale interface engineering and particle-size refinement synergistically unlock high-energy boron reactivity"
