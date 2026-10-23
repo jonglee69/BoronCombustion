@@ -4,12 +4,14 @@ title: "BoronCombustion: ReaxFF-MD inputs and analysis for boron nanoparticles w
 authors:
   - family-names: Lee
     given-names: Jong Hyeon
+    orcid: "https://orcid.org/0000-0003-3193-9128"
   - family-names: Joo
     given-names: Sin Hyong
   - family-names: Lee
     given-names: Yo Han
   - family-names: Nersisyan
     given-names: Hayk
+    orcid: "https://orcid.org/0000-0001-6756-4714"
 license: MIT
 repository-code: "https://github.com/jonglee69/BoronCombustion"
 identifiers:
